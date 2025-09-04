@@ -173,12 +173,7 @@ async function save(gister, database, query) {
         if (database.hashcode == oldHashcode) {
             return Promise.resolve(database);
         }
-        promise = gister.update(
-            database.id,
-            database.name,
-            schema,
-            database.query
-        );
+        promise = gister.update(database.id, database.name, schema, database.query);
     }
     return promise.then((gist) => afterSave(database, gist));
 }
@@ -207,7 +202,7 @@ function loadDbFromArrayBuffer(buf) {
         p,
         bytes.length,
         bytes.length,
-        sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE
+        sqlite3.capi.SQLITE_DESERIALIZE_FREEONCLOSE | sqlite3.capi.SQLITE_DESERIALIZE_RESIZEABLE
     );
     return db;
 }
