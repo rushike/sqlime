@@ -14,6 +14,8 @@ class Toolbar extends HTMLElement {
     open file <input type="file">
 </label>
 <button title="⌃U or ⌘U" class="button button--small">open url</button>
+<button id="opfsBtn" class="button button--small">OPFS</button>
+
 <a href="settings.html" class="button button--small">
     <svg viewBox="0 0 800 800" role="img">
         <path fill="currentColor" fill-rule="evenodd" stroke="none"
@@ -28,15 +30,32 @@ class Toolbar extends HTMLElement {
         <path fill="currentColor" fill-rule="evenodd" stroke="none"
             d="M 394.474884 188.171265 C 408.828461 188.171265 420.556183 192.634827 429.658447 201.562073 C 438.760742 210.489258 443.311798 221.60437 443.311798 234.907715 C 443.311798 248.210999 438.760742 259.369873 429.658447 268.384644 C 420.556183 277.399353 408.828461 281.906677 394.474884 281.906677 C 379.946259 281.906677 368.087219 277.399353 358.89743 268.384644 C 349.707642 259.369873 345.112823 248.210999 345.112823 234.907715 C 345.112823 221.60437 349.707642 210.489258 358.89743 201.562073 C 368.087219 192.634827 379.946259 188.171265 394.474884 188.171265 Z M 444.624603 334.156921 L 444.624603 556.286133 L 515.516907 556.286133 L 515.516907 613 L 282.622559 613 L 282.622559 556.286133 L 361.654358 556.286133 L 361.654358 390.870758 L 285.248199 390.870758 L 285.248199 334.156921 Z" />
     </svg>
-</a>`;
+</a>
+
+<opfs-picker id="picker" style="display:none"></opfs-picker>
+`;
         this.btnOpenFile = this.querySelector(":nth-child(1)");
         this.file = this.btnOpenFile.querySelector("input");
         this.btnOpenUrl = this.querySelector(":nth-child(2)");
-        this.btnSettings = this.querySelector(":nth-child(3)");
-        this.btnAbout = this.querySelector(":nth-child(4)");
+        this.opfsBtn = this.querySelector(":nth-child(3)");
+        this.btnSettings = this.querySelector(":nth-child(4)");
+        this.btnAbout = this.querySelector(":nth-child(5)");
+        this.opfsPicker = this.querySelector("#picker");
     }
 
     listen() {
+        this.opfsBtn.addEventListener("click", () => {
+            this.opfsPicker.removeAttribute("style")
+        });
+        this.opfsPicker.addEventListener("opfs-file", e => {
+            this.opfsPicker.setAttribute("style", "display:none");
+            this.dispatchEvent(new CustomEvent("opfs-file", {detail : e.detail}));
+        });
+
+        this.opfsPicker.addEventListener("close", () => {
+            this.opfsPicker.setAttribute("style", "display:none")
+        });
+
         this.file.addEventListener("change", (event) => {
             if (!event.target.files.length) {
                 return;

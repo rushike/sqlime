@@ -12,6 +12,7 @@ import { ShortcutController } from "./controllers/shortcuts.js";
 import { DatabasePath } from "./db-path.js";
 import { DEFAULT_NAME, MESSAGES, QUERIES } from "./sqlite/db.js";
 import { OpenAI } from "./cloud/openai.js";
+import { readFile, writeFile } from "./opfs.js";
 
 const ui = {
     buttons: {
@@ -353,15 +354,25 @@ ui.toolbar.addEventListener("open-file", (event) => {
     const file = event.detail;
     const reader = new FileReader();
     const fileType = file.name.endsWith(".sql") ? "sql" : "binary";
-    reader.onload = function () {
+    reader.onload = async function () {
         event.target.value = "";
         startFromFile(file, reader.result, fileType);
+        // this is to save file to opfs
+        await writeFile( file.name, reader.result);
+        await readFile(file.name)
     };
     if (fileType == "sql") {
         reader.readAsText(file);
     } else {
         reader.readAsArrayBuffer(file);
     }
+});
+
+ui.toolbar.addEventListener("opfs-file", async (event) => {
+    const filePath = event.detail.filePath;
+    const file = await readFile(filePath)
+    const data = await file.arrayBuffer();
+    await startFromFile(file, data);
 });
 
 // Toolbar 'open url' button click
@@ -395,3 +406,5 @@ new ShortcutController(shortcuts).listen(document);
 
 gister.loadCredentials();
 startFromCurrentUrl();
+writeFile("/dir1/dir2/file1.db", new Int32Array())
+writeFile("/dir1/dir2/dir3/file2.db", new Int32Array([1213]))

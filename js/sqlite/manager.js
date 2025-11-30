@@ -2,6 +2,7 @@
 
 import dumper from "./dumper.js";
 import { SQLite } from "./db.js";
+import { readFile } from "../opfs.js";
 
 // global SQLite WASM API object.
 let sqlite3;
@@ -79,7 +80,8 @@ async function loadSqlScript(name, path) {
 // loadFile loads a database from the specified local or remote binary file.
 async function loadFile(name, path) {
     console.debug(`Loading database from url ${path.value}...`);
-    const promise = fetch(path.value)
+    function loadFromUrl() {
+        return fetch(path.value)
         .then((response) => {
             if (!response.ok) {
                 return null;
@@ -89,11 +91,18 @@ async function loadFile(name, path) {
         .catch((reason) => {
             return null;
         });
-    const buf = await promise;
+    }
+
+    async function loadFromOpfsPath() {
+        const file = await readFile(path.value)
+        return await file.arrayBuffer();
+    }
+    
+    const buf = await loadFromOpfsPath() || await loadFromUrl();
+    
     if (!buf) {
         return null;
     }
-
     const db = loadDbFromArrayBuffer(buf);
     const database = new SQLite(name, path, sqlite3.capi, db);
     database.gatherTables();
