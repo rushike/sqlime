@@ -60,6 +60,10 @@ class SQLite {
             rowMode: "object",
             resultRows: rows,
         });
+
+        // initiate with wa-sqlite instance
+        // console.log("databse rows : ", rows);
+        
         if (!rows.length) {
             return null;
         }

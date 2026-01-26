@@ -147,6 +147,8 @@ function execute(sql) {
         ui.status.info(MESSAGES.executing);
         timeit.start();
         const result = database.execute(sql);
+        console.log("execute : ", result);
+        
         const elapsed = timeit.finish();
         showResult(result, elapsed);
         return Promise.resolve();
@@ -406,5 +408,3 @@ new ShortcutController(shortcuts).listen(document);
 
 gister.loadCredentials();
 startFromCurrentUrl();
-writeFile("/dir1/dir2/file1.db", new Int32Array())
-writeFile("/dir1/dir2/dir3/file2.db", new Int32Array([1213]))

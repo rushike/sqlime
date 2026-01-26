@@ -3,7 +3,6 @@
 import dumper from "./dumper.js";
 import { SQLite } from "./db.js";
 import { readFile } from "../opfs.js";
-
 // global SQLite WASM API object.
 let sqlite3;
 
@@ -104,7 +103,11 @@ async function loadFile(name, path) {
         return null;
     }
     const db = loadDbFromArrayBuffer(buf);
+    // const db = new SQLiteClient();
+    // console.log("db from sqlite Client : ", db);
+    
     const database = new SQLite(name, path, sqlite3.capi, db);
+    
     database.gatherTables();
     return database;
 }

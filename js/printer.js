@@ -48,7 +48,11 @@ function join(values, tagName) {
 // sanitize strips HTML from the text.
 function sanitize(text) {
     const div = document.createElement("div");
-    div.innerText = text;
+    
+    if (text instanceof String)
+        text = text.trim();
+
+    div.innerText = text?.length > 120 ? text.slice(0, 20) + " ... " + text.slice(text.length - 20, text.length) : text;
     return div.innerHTML;
 }
 
